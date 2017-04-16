@@ -8,7 +8,7 @@ use URI::Escape;
 use Storable qw/nstore retrieve/;
 use JSON qw/decode_json encode_json/;
 
-use Data::Dumper;
+#use Data::Dumper;
 
 use constant VERSION => '0.1';
 
