@@ -26,15 +26,15 @@ sub config() {
 
 	print "first time configuration\n";
 	print 'enter username: ';
-	$config{user} = <>;
+	$config{user} = <STDIN>;
 	chomp $config{user};
 
 	print 'enter API key: ';
-	$config{key} = <>;
+	$config{key} = <STDIN>;
 	chomp $config{key};
 
 	print 'enter API secret: ';
-	$config{secret} = <>;
+	$config{secret} = <STDIN>;
 	chomp $config{secret};
 
 	print "\n";
@@ -59,7 +59,7 @@ sub auth($$) {
 	print AUTHORIZE_PATH . '?username=' . uri_escape($config->{user}) . '&showSignUpButton=false&access=Full&permissions=Modify&oauth_token=' . uri_escape($ua->oauth_token) . "\n\n";
 
 	print 'enter pin: ';
-	my $pin = <>;
+	my $pin = <STDIN>;
 	chomp $pin;
 
 	$r = $ua->post(ACCESS_TOKEN_PATH, [
@@ -93,7 +93,12 @@ $ua->env_proxy;
 $ua->agent('uri2smug/' . VERSION . ' (+https://gitlab.com/jimdigriz/uri2smug; ' . $ua->_agent . ')');
 $ua->from($config->{user});
 
-auth($config, $ua) unless (defined($config->{oauth_token}) && defined($config->{oauth_token_secret}));
+unless (defined($config->{oauth_token}) && defined($config->{oauth_token_secret})) {
+	die "please re-run standalone to refetch auth token"
+		if (scalar @ARGV);
+
+	auth($config, $ua);
+}
 
 exit 0 unless (scalar @ARGV);
 
@@ -128,5 +133,21 @@ die "argument did not match a single gallery entry\n"
 my $album = (split '/', $albums[0]->{Uri})[-1];
 
 print STDERR "album id: $album\n";
+
+while (<STDIN>) {
+	chomp;
+
+	print STDERR "importing: $_...";
+
+	my $p = encode_json {
+		'AllowInsecure'	=> JSON::true,
+		'Uri'		=> $_,
+	};
+	$r = $ua->post(BASE . '/api/v2/album/' . $album . '!uploadfromuri', 'Content-Type' => 'application/json', Content => $p);
+print STDERR $r->decoded_content;
+	die $r->as_string if $r->is_error;
+
+	print STDERR "done\n";
+}
 
 exit 0;

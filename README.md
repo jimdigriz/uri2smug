@@ -21,6 +21,14 @@ Pipe in a line seperated list of URLs that you wish to import into an album like
 
     cat list-of-urls | ./uri2smug.pl album-name
 
+For example you can do:
+
+    aws s3 ls 's3://mybucket.photos/20170416 - Example/' \
+    	| sed -n 's/.* \(.*\.JPG\)$/\1/ p' \
+    	| xargs -n1 printf "s3://mybucket.photos/20170416 - Example/%s\0" \
+    	| xargs -0 -n1 aws --profile digriz s3 presign --expires-in 300 \
+    	| ./uri2smug.pl '20170416 - Example'
+
 ## First Time
 
 Get yourself a [SmugMug API Key](https://api.smugmug.com/api/v2/doc/tutorial/api-key.html)
