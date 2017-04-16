@@ -144,7 +144,6 @@ while (<STDIN>) {
 		'Uri'		=> $_,
 	};
 	$r = $ua->post(BASE . '/api/v2/album/' . $album . '!uploadfromuri', 'Content-Type' => 'application/json', Content => $p);
-print STDERR $r->decoded_content;
 	die $r->as_string if $r->is_error;
 
 	print STDERR "done\n";

@@ -1,8 +1,6 @@
-CLI tool to upload photos to SmugMug using 'uploadfromuri'.
+CLI tool to upload photos to SmugMug using [`uploadfromuri`](https://api.smugmug.com/api/v2/album/SJT3DX!uploadfromuri).
 
 This instructs SmugMug to download the photo content directly from (for example) AWS S3 rather than having you upload using your local Internet connection.
-
-**N.B.** THIS TOOL IS STILL NOT YET FUNCTIONAL AND UNDER ACTIVE DEVELOPMENT
 
 # Preflight
 
@@ -26,7 +24,7 @@ For example you can do:
     aws s3 ls 's3://mybucket.photos/20170416 - Example/' \
     	| sed -n 's/.* \(.*\.JPG\)$/\1/ p' \
     	| xargs -n1 printf "s3://mybucket.photos/20170416 - Example/%s\0" \
-    	| xargs -0 -n1 aws --profile digriz s3 presign --expires-in 300 \
+    	| xargs -0 -n1 aws s3 presign --expires-in 300 \
     	| ./uri2smug.pl '20170416 - Example'
 
 **N.B.** you have to first create the album (called 'Gallery') via the web frontend under 'Organize'
