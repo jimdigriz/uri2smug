@@ -37,6 +37,8 @@ sub config() {
 	$config{secret} = <>;
 	chomp $config{secret};
 
+	print "\n";
+
 	my $orig = umask;
 	umask 077;
 	nstore \%config, CONFIG;
@@ -54,7 +56,7 @@ sub auth($$) {
 	$ua->oauth_update_from_response($r);
 
 	print "open the following in your web browser and enter in the pin:\n";
-	print AUTHORIZE_PATH . '?username=' . uri_escape($config->{user}) . '&showSignUpButton=false&&access=Full&permissions=Modify&oauth_token=' . uri_escape($ua->oauth_token) . "\n\n";
+	print AUTHORIZE_PATH . '?username=' . uri_escape($config->{user}) . '&showSignUpButton=false&access=Full&permissions=Modify&oauth_token=' . uri_escape($ua->oauth_token) . "\n\n";
 
 	print 'enter pin: ';
 	my $pin = <>;
