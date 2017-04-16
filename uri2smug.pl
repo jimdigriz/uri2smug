@@ -15,7 +15,7 @@ use constant VERSION => '0.1';
 use constant CONFIG => $ENV{HOME} . '/.uri2smug';
 
 use constant {
-	SCOPE			=> 'https://api.smugmug.com',
+	BASE			=> 'https://api.smugmug.com/api/v2',
 	REQUEST_TOKEN_PATH	=> 'https://secure.smugmug.com/services/oauth/1.0a/getRequestToken',
 	AUTHORIZE_PATH		=> 'https://secure.smugmug.com/services/oauth/1.0a/authorize',
 	ACCESS_TOKEN_PATH	=> 'https://secure.smugmug.com/services/oauth/1.0a/getAccessToken',
@@ -95,6 +95,8 @@ $ua->from($config->{user});
 
 auth($config, $ua) unless (defined($config->{oauth_token}) && defined($config->{oauth_token_secret}));
 
+exit 0 unless (scalar @ARGV);
+
 $ua->oauth_token($config->{oauth_token});
 $ua->oauth_token_secret($config->{oauth_token_secret});
 
@@ -104,9 +106,27 @@ $ua->default_header(
 	'Accept-Encoding'	=> scalar HTTP::Message::decodable(),
 );
 
-my $r = $ua->get(SCOPE . '/api/v2!authuser');
+my $r = $ua->get(BASE . '!authuser');
 die $r->as_string if $r->is_error;
 
-print Dumper decode_json $r->decoded_content;
+my $j = decode_json $r->decoded_content;
+my $nickname = $j->{Response}->{User}->{NickName};
+
+print STDERR "nickname: $nickname\n";
+
+$r = $ua->get(BASE . '/user/digriz!albums');
+die $r->as_string if $r->is_error;
+
+$j = decode_json $r->decoded_content;
+my $albums_all = $j->{Response}->{Album};
+
+my @albums = grep { $_->{Name} eq $ARGV[0] } @{$j->{Response}->{Album}};
+
+die "argument did not match a single gallery entry\n"
+	unless (scalar @albums == 1);
+
+my $album = (split '/', $albums[0]->{Uri})[-1];
+
+print STDERR "album id: $album\n";
 
 exit 0;
