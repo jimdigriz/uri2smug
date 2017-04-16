@@ -2,6 +2,8 @@ CLI tool to upload photos to SmugMug using 'uploadfromuri'.
 
 This instructs SmugMug to download the photo content directly from (for example) AWS S3 rather than having you upload using your local Internet connection.
 
+**N.B.** THIS TOOL IS STILL NOT YET FUNCTIONAL AND UNDER ACTIVE DEVELOPMENT
+
 # Preflight
 
 This project requires Perl.
