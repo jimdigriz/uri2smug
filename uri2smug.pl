@@ -112,15 +112,15 @@ $ua->default_header(
 );
 
 my $r = $ua->get(BASE . '!authuser');
-die $r->as_string if $r->is_error;
+die $r->as_string . "\n" . $r->decoded_content if $r->is_error;
 
 my $j = decode_json $r->decoded_content;
 my $nickname = $j->{Response}->{User}->{NickName};
 
-print STDERR "nickname: $nickname\n";
+print "nickname: $nickname\n";
 
 $r = $ua->get(BASE . '/user/digriz!albums');
-die $r->as_string if $r->is_error;
+die $r->as_string . "\n" . $r->decoded_content if $r->is_error;
 
 $j = decode_json $r->decoded_content;
 my $albums_all = $j->{Response}->{Album};
@@ -132,21 +132,28 @@ die "argument did not match a single gallery entry\n"
 
 my $album = (split '/', $albums[0]->{Uri})[-1];
 
-print STDERR "album id: $album\n";
+print "album id: $album\n\n";
 
+my $fail = 0;
 while (<STDIN>) {
 	chomp;
 
-	print STDERR "importing: $_...";
+	print "importing: $_...";
 
 	my $p = encode_json {
 		'AllowInsecure'	=> JSON::true,
 		'Uri'		=> $_,
 	};
 	$r = $ua->post(BASE . '/api/v2/album/' . $album . '!uploadfromuri', 'Content-Type' => 'application/json', Content => $p);
-	die $r->as_string if $r->is_error;
 
-	print STDERR "done\n";
+	if ($r->is_error) {
+		print "FAIL\n";
+	} else {
+		print "done\n";
+	}
 }
+
+print "\n";
+print "imported " . ($. - $fail) . " of $.\n";
 
 exit 0;
