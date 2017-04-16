@@ -29,6 +29,8 @@ For example you can do:
     	| xargs -0 -n1 aws --profile digriz s3 presign --expires-in 300 \
     	| ./uri2smug.pl '20170416 - Example'
 
+**N.B.** you have to first create the album (called 'Gallery') via the web frontend under 'Organize'
+
 ## First Time
 
 Get yourself a [SmugMug API Key](https://api.smugmug.com/api/v2/doc/tutorial/api-key.html)
