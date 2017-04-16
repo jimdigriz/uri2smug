@@ -19,6 +19,8 @@ Pipe in a line seperated list of URLs that you wish to import into an album like
 
     cat list-of-urls | ./uri2smug.pl album-name
 
+**N.B.** you have to first create the album (called 'Gallery') via the web frontend under 'Organize'
+
 For example you can do:
 
     aws s3 ls 's3://mybucket.photos/20170416 - Example/' \
@@ -27,7 +29,7 @@ For example you can do:
     	| xargs -0 -n1 aws s3 presign --expires-in 300 \
     	| ./uri2smug.pl '20170416 - Example'
 
-**N.B.** you have to first create the album (called 'Gallery') via the web frontend under 'Organize'
+**N.B.** you should set `expires-in` to several hours if you have a large number of photos to import as the URL may expire before `uri2smug` actually gets to processing it!
 
 ## First Time
 
