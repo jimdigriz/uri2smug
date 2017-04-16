@@ -1,4 +1,4 @@
-CLI tool to upload photos to SmugMug using [`uploadfromuri`](https://api.smugmug.com/api/v2/album/SJT3DX!uploadfromuri).
+CLI tool to upload photos to [SmugMug](https://smugmug.com) using [`uploadfromuri`](https://api.smugmug.com/api/v2/album/SJT3DX!uploadfromuri).
 
 This instructs SmugMug to download the photo content directly from (for example) AWS S3 rather than having you upload using your local Internet connection.
 
