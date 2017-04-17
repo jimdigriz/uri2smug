@@ -134,6 +134,8 @@ my $album = (split '/', $albums[0]->{Uri})[-1];
 
 print "album id: $album\n\n";
 
+$| = 1;
+
 my $fail = 0;
 while (<STDIN>) {
 	chomp;
