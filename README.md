@@ -23,10 +23,11 @@ Pipe in a line seperated list of URLs that you wish to import into an album like
 
 For example you can do:
 
-    aws s3 ls 's3://mybucket.photos/20170416 - Example/' \
-    	| sed -n 's/.* \(.*\.JPG\)$/\1/ p' \
-    	| xargs -n1 printf "s3://mybucket.photos/20170416 - Example/%s\0" \
-    	| xargs -0 -n1 aws s3 presign --expires-in 300 \
+    aws s3 ls --recursive 's3://mybucket/20170416 - Example/' \
+    	| sed -n -e '/.\(jpe\?g\|JPE\?G\)$/ s/ \+/^/g p' \
+    	| cut -d^ -f4- \
+    	| sed -e 's/\^/ /g' \
+    	| xargs -I{} aws s3 presign --expires-in 300 's3://mybucket/{}' \
     	| ./uri2smug.pl '20170416 - Example'
 
 **N.B.** you should set `expires-in` to several hours if you have a large number of photos to import as the URL may expire before `uri2smug` actually gets to processing it!
